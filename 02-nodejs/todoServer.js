@@ -51,9 +51,7 @@ const port = 3000
 
 let idCounter = 0
 
-let todolist = [
-
-]
+let todolist = []
 
 // New Todo is added through this function
 const addTodo = (title, info) => {

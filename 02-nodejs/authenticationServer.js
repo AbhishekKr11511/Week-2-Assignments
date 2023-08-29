@@ -98,6 +98,7 @@ app.get('/data', (req,res)=>{
   res.json(userArray)
 })
 
+
 app.listen(5000)
 
 module.exports = app;
