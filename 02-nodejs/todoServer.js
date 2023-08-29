@@ -46,4 +46,101 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const port = 3000
+
+
+let idCounter = 0
+
+let todolist = [
+
+]
+
+// New Todo is added through this function
+const addTodo = (title, info) => {
+  idCounter = idCounter + 1
+  let id = idCounter
+  let newTodo = {
+    id : id,
+    title : title,
+    info : info
+  }
+  console.log(newTodo)
+  todolist.push(newTodo)
+  return true
+}
+
+// Delete the specific todo
+const deleteTodo = (task, index) => {
+  todolist.splice(index , 1)
+  console.log(task)
+  return true
+}
+
+// Update the specific todo
+const updateTodo = (id, title, info) =>{
+  let updateThis = todolist.find(element=> element.id === id)
+  let taskIndex = todolist.indexOf(updateThis)
+
+  updateThis.title = title
+  updateThis.info = info
+
+  todolist[taskIndex] = updateThis
+
+  return updateThis
+}
+
+app.get('/todos', (req, res)=>{
+  res.json(todolist)
+})
+
+app.get('/todos/:id', (req, res)=>{
+  let id = parseInt(req.params.id)
+  let task = todolist.find(element => element.id === id)
+  if(!task){
+    return res.status(404).send('Sorry, No task with that id found!')
+  }
+  res.json(task)
+})
+
+app.post('/todos', (req, res)=>{
+  let todoTitle = req.body.title
+  let todoInfo = req.body.info
+
+  let added = addTodo(todoTitle, todoInfo)
+
+  if(!added){
+    res.send("Sorry Couldn't add Task")
+  }
+  res.send("New Added Successfully")
+})
+
+app.delete('/todos/:id', (req, res)=>{
+  let id = parseInt(req.params.id)
+  let task = todolist.find(element=> element.id === id)
+  let index = todolist.indexOf(task)
+  if(!task){
+    res.send("Sorry, No such task found !")
+  }
+  let deleted = deleteTodo(task, index)
+  if(!deleted){
+    res.send("Sorry Couldn't delete task")
+  }
+  res.send("Deletion Successful")
+})
+
+app.put('/todos/:id', (req, res)=>{
+  let id = parseInt(req.params.id)
+  let updatedTitle = req.body.title
+  let updatedInfo = req.body.info
+
+  let requiredTask = todolist.find(element=> element.id === id)
+
+  let updatedTask = updateTodo(id, updatedTitle, updatedInfo)
+
+  res.json(`${requiredTask} is updated to ${updatedTask}`)
+})
+
+app.listen(port)
+
+
 module.exports = app;
