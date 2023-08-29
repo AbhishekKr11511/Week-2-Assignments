@@ -32,6 +32,72 @@
 const express = require("express")
 const PORT = 3000;
 const app = express();
+const bodyParser = require('body-parser')
 // write your logic here, DONT WRITE app.listen(3000) when you're running tests, the tests will automatically start the server
+
+app.use(bodyParser.json())
+
+
+let userArray = []
+let userCount = 0 
+
+
+// This is signup function, to create a user
+const createUser = (firstName, lastName, email, password) => {
+  userCount = userCount + 1
+  let newUser = {
+    id : userCount,
+    firstName : firstName,
+    lastName : lastName,
+    email : email,
+    password : password
+  }
+
+  userArray.push(newUser)
+
+  return true
+}
+
+// This is login function, to display the credentials to user
+const checkUser = (email, password) =>{
+  let findUser = userArray.find(user=> user.email === email)
+  if(!findUser){
+    return "Sorry Email does not exit"
+  }
+  if(findUser.password === password){
+    return findUser
+  }
+  else{
+    let message = `User found with email : ${email} , but the password is incorrent, try again`
+    return message
+  }
+}
+
+
+app.post('/signup', (req,res)=>{
+  let firstName = req.body.firstName
+  let lastName = req.body.lastName
+  let email = req.body.email
+  let password = req.body.password
+
+  let created = createUser(firstName, lastName, email, password)
+  if(!created){
+    res.send("Coudn't create User, try again...")
+  }
+  res.send('User Create successfully!!')
+})
+
+app.post('/login', (req,res)=>{
+  let email = req.body.email
+  let password = req.body.password
+  
+  let userOrMessage = checkUser(email, password)
+  res.send(userOrMessage)
+})
+app.get('/data', (req,res)=>{
+  res.json(userArray)
+})
+
+app.listen(5000)
 
 module.exports = app;
