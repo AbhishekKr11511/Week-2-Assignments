@@ -21,5 +21,37 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
+const port = 4000
+
+const folderPath = path.join(__dirname, "files/")
+
+const filePath = (filenameString) => {
+  let fullfilePath = path.join(folderPath, filenameString)
+  return fullfilePath
+}
+
+
+app.get('/files', (req,res)=>{
+  fs.readdir(folderPath, 'utf-8', (err, files)=>{
+    if(err){
+      res.send("Sorry couldn't read given folder")
+    }
+    res.send(files)
+  })
+
+})
+
+app.get('/files/:filename', (req,res)=>{
+  let filename = req.params.filename
+  let path = filePath(filename)
+  fs.readFile(path, 'utf-8', (err, data)=>{
+    if(err){
+      res.send("couldn't read file, or the file doesn't exist")
+    }
+    res.send(data)
+  })
+})
+
+app.listen(port)
 
 module.exports = app;
