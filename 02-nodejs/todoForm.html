@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Todos</title>
+</head>
+<body>
+    
+        <input type="text" placeholder="Title" id="title">
+        <br>
+        <input type="text" placeholder="Description" id="info">
+        <br>
+        <button id="button1" onclick="onPress()">Send</button>
+        <button id="button2" onclick="submitData()">Add Task</button>
+    
+
+    <div id="todolist">
+
+    </div>
+    <script>
+        function onPress(){
+            fetch("http://localhost:5000/todos",{
+                method: "GET"
+            }).then(async(res)=>await res.json()).then(async (result)=> await console.log(result))
+        }
+        function submitData(){
+            fetch("http://localhost:5000/todos",{
+                method: "POST",
+                headers:{
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify({
+                    title: document.getElementById('title').value,
+                    info: document.getElementById('info').value
+                })
+            }).then(async(res)=>await res.json()).then(async (result)=> await console.log(result))
+        }
+    </script>
+</body>
+</html>
