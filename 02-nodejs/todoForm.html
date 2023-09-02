@@ -9,7 +9,6 @@
         <br>
         <input type="text" placeholder="Description" id="info">
         <br>
-        <button id="button1" onclick="onPress()">Send</button>
         <button id="button2" onclick="submitData()">Add Task</button>
     
 
@@ -17,10 +16,45 @@
 
     </div>
     <script>
+        function deleteTask(itemID){
+
+            fetch('http://localhost:5000/todos', {
+                method : "DELETE",
+
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify({
+                    id: itemID,
+                })
+            }).then(resp=>resp.json()).then(result=> {
+
+                document.getElementById("todolist").innerHTML = ""
+                onPress()
+            })
+            
+        }
+
         function onPress(){
             fetch("http://localhost:5000/todos",{
                 method: "GET"
-            }).then(async(res)=>await res.json()).then(async (result)=> await console.log(result))
+            }).then(async(res)=>await res.json()).then(async (result)=> {
+
+                result.forEach(element => {
+                    let task = document.createElement("div")
+                    task.innerHTML = `
+                    <span >${element.id}</span>
+                    <br>
+                    <span>${element.title}</span>
+                    <br>
+                    <span>${element.info}</span>
+                    <br>
+                    <button onclick="deleteTask(${element.id})">Delete</button>
+                    <br><br>
+                    `
+                    document.getElementById("todolist").appendChild(task)
+                });
+                })
         }
         function submitData(){
             fetch("http://localhost:5000/todos",{
@@ -32,8 +66,24 @@
                     title: document.getElementById('title').value,
                     info: document.getElementById('info').value
                 })
-            }).then(async(res)=>await res.json()).then(async (result)=> await console.log(result))
+            }).then(async(res)=>await res.json()).then(async (result)=> {
+                let task = document.createElement("div")
+                    task.innerHTML = `
+                    <span >${result.id}</span>
+                    <br>
+                    <span>${result.title}</span>
+                    <br>
+                    <span>${result.info}</span>
+                    <br>
+                    <button onclick="deleteTask(${result.id})">Delete</button>
+                    <br><br>
+                    `
+                    document.getElementById("todolist").appendChild(task)
+            })
         }
+
+        
+        onPress()
     </script>
 </body>
 </html>

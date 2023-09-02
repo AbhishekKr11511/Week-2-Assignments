@@ -37,8 +37,6 @@ app.post('/todos', async (req,res)=>{
 
     console.log(newData)
 
-
-
     fs.readFile(todosPath, 'utf-8', (err, data)=>{
         if(err)throw(err)
         const todos = JSON.parse(data)
@@ -46,6 +44,25 @@ app.post('/todos', async (req,res)=>{
         fs.writeFile(todosPath, JSON.stringify(todos), (err)=>{
             if(err)throw(err)
             res.status(200).json(newData)
+        })
+    })
+})
+
+
+app.delete('/todos', async (req,res)=>{
+
+    let deletedId = req.body.id
+
+    fs.readFile(todosPath, 'utf-8', (err, data)=>{
+        if(err)throw(err)
+        const todos = JSON.parse(data)
+
+        let tobedeleted = todos.find((item)=>item.id === deletedId)
+        let indexOfDeleted = todos.indexOf(tobedeleted)
+        todos.splice(indexOfDeleted, 1)
+        fs.writeFile(todosPath, JSON.stringify(todos), (err)=>{
+            if(err)throw(err)
+            res.status(200).json(todos)
         })
     })
 })
